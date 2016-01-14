@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>snake</title>
+</head>
+<body>
+<canvas id="myCanvas" width="400" height="400" style="border:1px solid #000;"></canvas>
+
+<script type="text/javascript">
+    var GluttonousSnake = (function() {
+        var myCanvas;
+        var ctx;
+        var direction = 2;
+        var foodX;
+        var foodY;
+        var snakeBody = [{X: 0, Y: 0}, {X: 1, Y: 0}, {X: 2, Y: 0}, {X: 3, Y: 0}];
+        var time = 200;
+        var goal = 0;
+        var Interval;
+        var difficulty = 50; //最快速度设置，越小越快
+
+        var _init = function (id) {
+            myCanvas = document.getElementById(id);
+            ctx = myCanvas.getContext("2d");
+            _directionKey();
+            _drawSnake();
+            _randFood();
+            _startBtn();
+        };
+
+        //开始游戏
+        var _start = function () {
+            Interval = setInterval(_moveSnake, time);
+        };
+
+        //开始按钮
+        var _startBtn = function () {
+            ctx.moveTo(190, 180);
+            ctx.lineTo(220, 200);
+            ctx.lineTo(190, 220);
+            ctx.fillStyle = 'green';
+            ctx.fill();
+//            ctx.fillStyle = 'rgba(0, 0, 0, 0.3)';
+//            ctx.fillRect(140, 170, 120, 60);
+            myCanvas.addEventListener('click', function(e){
+                var CX, CY;
+                if (e.layerX || e.layerX == 0) {
+                    CX = e.layerX;
+                    CY = e.layerY;
+                } else if (e.offsetX || e.offsetX == 0) { // Opera
+                    CX = e.offsetX;
+                    CY = e.offsetY;
+                }
+                if(ctx.isPointInPath(CX, CY)){
+                    _start();
+                    ctx.clearRect(140, 170, 120, 60);
+                }
+            }, false);
+        };
+
+        //初始化蛇身
+        var _drawSnake = function () {
+            snakeBody.forEach(function (item) {
+                ctx.fillStyle = "green";
+                ctx.fillRect(item.X * 8, item.Y * 8, 8, 8);
+            });
+        };
+
+        //蛇身移动
+        var _moveSnake = function () {
+            var snakeHead = snakeBody.slice(-1)[0];
+            var x = snakeHead.X;
+            var y = snakeHead.Y;
+            switch(direction){
+                case 1 : y = y - 1;break;
+                case 2 : x = x + 1;break;
+                case 0 : x = x - 1;break;
+                case 3 : y = y + 1;break;
+            }
+            _againstTheWall(x, y);
+            _againstSelf(x, y);
+            snakeBody.push({X: x, Y: y});
+            ctx.fillStyle = "green";
+            ctx.fillRect(x * 8, y * 8, 8, 8);
+            _eatFood(x, y);
+        };
+
+        //吃到食物
+        var _eatFood = function (x, y) {
+            if (x == foodX && y == foodY) {
+                _randFood();
+                goal ++;
+                _upgrade();
+            } else {
+                var clearOphiurid = snakeBody.shift();
+                ctx.clearRect(clearOphiurid.X * 8, clearOphiurid.Y * 8, 8, 8);
+            }
+        };
+
+        //提升难度等级
+        var _upgrade = function () {
+              if (goal % 5 == 0 && time > difficulty) {
+                  time = time - 5 * 5;
+                  clearInterval(Interval);
+                  Interval = setInterval(_moveSnake, time);
+              }
+        };
+
+        //方向键 1上 2右 3下 0左
+        var _directionKey = function () {
+            document.onkeydown = function(e) {
+                direction = e.keyCode - 37;
+            };
+        };
+
+        //撞墙了
+        var _againstTheWall = function (x, y) {
+            if(x>50 || y>50 || x<0 || y<0){
+                alert("你撞墙了，本次得分" + goal + "分,重新来过吧.....");
+                window.location.reload();
+            }
+        };
+
+        //撞到自己了
+        var _againstSelf = function (x, y) {
+            snakeBody.forEach(function (item) {
+                if (item.X == x && item.Y == y) {
+                    alert("你撞到自己了，本次得分" + goal + "分,重新来过吧.....");
+                    window.location.reload();
+                }
+            });
+        };
+
+        //随机摆放食物
+        var _randFood = function () {
+            var isFoodPlace = true;
+            foodX = Math.ceil(Math.random() * 50); //随机产生一个X坐标点
+            foodY = Math.ceil(Math.random() * 50); //随机产生一个Y坐标点
+            snakeBody.forEach(function (item) {
+                if (item.X == foodX && item.Y == foodY) {
+                    isFoodPlace = false;
+                }
+            });
+            if (isFoodPlace) {
+                ctx.fillStyle = "green";
+                ctx.fillRect(foodX * 8, foodY * 8, 8, 8); //绘制一个食物
+            } else {
+                _randFood();
+            }
+        };
+
+        return {
+            init : _init
+        }
+    })();
+
+    GluttonousSnake.init("myCanvas");
+</script>
+</body>
+</html>
