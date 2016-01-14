@@ -2,7 +2,7 @@
 
 #####***canvas学习网站***
 >[Canvas绘图与动画学习59例](Canvas绘图与动画学习59例)
->[Canvas_Api](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
+[Canvas_Api](https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API)
 
 #####***canvas小游戏***
 >[贪吃蛇](https://jsfiddle.net/moneyinto/zbyysguq/)
@@ -28,10 +28,10 @@ var ctx = canvas.getContext("2d")
 
 3.canvas浏览器支持
 > IE支持9以上
-> chrome支持10.0以上
-> firefox支持3.6以上
-> safari支持5.0以上
-> opera支持11.0以上
+chrome支持10.0以上
+firefox支持3.6以上
+safari支持5.0以上
+opera支持11.0以上
 
 4.canvas基本功能
 - 画线
